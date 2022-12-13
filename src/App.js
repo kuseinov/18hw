@@ -1,23 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
-
+import React, { useEffect, useState } from "react";
+import useFetch from "./hooks/useFetch";
 function App() {
+  const [todo, setTodo] = useState("");
+  const BASE_URL = "https://todo-a3c5e-default-rtdb.firebaseio.com/todo.json";
+
+  const { todos, addItem, getTodo,removeItemHandler } = useFetch([], BASE_URL);
+
+  const addTodoHendler = (e) => {
+    e.preventDefault();
+    addItem({ text: todo });
+    setTodo("");
+  };
+  useEffect(() => {
+    getTodo();
+  }, []);
+  const demoveItemHandler =(todoId)=>{
+    return()=>{
+      removeItemHandler(todoId)
+      getTodo(todoId)
+    }
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <form onSubmit={addTodoHendler}>
+        <input
+          type="text"
+          value={todo}
+          onChange={(e) => setTodo(e.target.value)}
+        />
+        <button>add</button>
+      </form>
+      <div>
+        {todos.map((item) => (
+          <li key={item.id}>{item.text}
+          <button onClick={demoveItemHandler(item.id)}>sadf</button>
+          </li>
+        ))}
+      </div>
     </div>
   );
 }
